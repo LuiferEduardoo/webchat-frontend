@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import AuthModal from "./AuthModal";
+
 import {
   Modal,
   ModalContent,
