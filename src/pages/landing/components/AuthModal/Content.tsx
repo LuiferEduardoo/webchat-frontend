@@ -8,6 +8,9 @@ interface Content {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isDisabled: boolean;
   type: "login" | "register";
+  handleSubmit: () => void;
+  authToGoogle: () => void;
+  isLoadingGoogle: boolean;
 }
 
 const Content: React.FC<Content> = ({
@@ -16,10 +19,13 @@ const Content: React.FC<Content> = ({
   handleChange,
   isDisabled,
   type,
+  handleSubmit,
+  authToGoogle,
+  isLoadingGoogle
 }) => {
   return (
     <form className="space-y-4">
-      <Button fullWidth>
+      <Button fullWidth onPress={authToGoogle} isDisabled={isLoading} isLoading={isLoadingGoogle}>
         <img src="https://img.clerk.com/static/google.svg?width=80 1x,https://img.clerk.com/static/google.svg?width=160 2x" />
         Continuar con Google
       </Button>
@@ -97,7 +103,8 @@ const Content: React.FC<Content> = ({
           type="submit"
           fullWidth
           isLoading={isLoading}
-          isDisabled={isDisabled}
+          isDisabled={isDisabled || isLoadingGoogle}
+          onPress={handleSubmit}
         >
           {type === "login" ? "Ingresar" : "Registrarse"}
         </Button>
