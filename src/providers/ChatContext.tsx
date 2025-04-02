@@ -4,7 +4,6 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { UserInterface } from "../pages/chat/interfaces/User.interface";
 import UserService from "../pages/chat/services/User";
@@ -41,8 +40,6 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     removeTokenCookie("access_token");
     setAccessToken(newToken);
   };
-
-  const navigate = useNavigate();
 
   useEffect(() => {
     const getInformationUser = async () => {
