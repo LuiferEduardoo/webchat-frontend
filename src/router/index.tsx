@@ -9,7 +9,7 @@ const AppRouter: React.FC = () => {
     <AuthProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<AccessControl />} />
+          <Route path="/*" element={<AccessControl />} />
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </Router>
