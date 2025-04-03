@@ -1,12 +1,15 @@
 import React from 'react';
 import Sidebar from './components/Sidebar';
+import ChatComponent from './components/Chat';
+import { Route, Routes } from 'react-router-dom';
 
 const Chat: React.FC = () => {
   return (
     <div className="flex h-screen">
       <Sidebar />
-      <div className="flex-1 p-4 overflow-auto ">
-      </div>
+      <Routes>
+        <Route path="/chat" element={<ChatComponent />} />
+      </Routes>
     </div>
   );
 };
