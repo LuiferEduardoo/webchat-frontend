@@ -8,7 +8,7 @@ const Chat: React.FC = () => {
     <div className="flex h-screen">
       <Sidebar />
       <Routes>
-        <Route path="/chat" element={<ChatComponent />} />
+        <Route path="/chat/*" element={<ChatComponent />} />
       </Routes>
     </div>
   );

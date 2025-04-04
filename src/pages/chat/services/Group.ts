@@ -24,6 +24,30 @@ class GroupService {
       throw error;
     }
   }
+
+  async createGroup(
+    accessToken: string | null,
+    setAccessToken: (token: string) => void,
+    data: {
+      name: string;
+      members: string[];
+    }
+  ){
+    try {
+      const config = {
+        method: "post",
+        url: `${API_URL}/api/v1/groups`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data
+      };
+      const response = await Auth.authorizedRequest(config, setAccessToken) as GroupInterface[];
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new GroupService();

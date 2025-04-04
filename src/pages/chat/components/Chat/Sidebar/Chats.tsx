@@ -72,14 +72,11 @@ const Chat: React.FC<Props> = ({ isCollapsed }) => {
               className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer"
             >
               <Avatar
-                src={chat.senderPicture || "https://images.unsplash.com/broken"}
+                src={chat.senderPicture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
               />
               {!isCollapsed && (
                 <div className="flex flex-col">
                   <span className="font-medium text-">{chat.senderName}</span>
-                  <span className="text-sm text-gray-500">
-                    {chat.lastMessage.content}
-                  </span>
                 </div>
               )}
             </Link>
