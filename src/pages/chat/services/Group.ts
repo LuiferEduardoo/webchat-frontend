@@ -25,6 +25,27 @@ class GroupService {
     }
   }
 
+  async getGroup(
+    accessToken: string | null,
+    setAccessToken: (token: string) => void,
+    groupId: string
+  ): Promise<GroupInterface>
+  {
+    try {
+      const config = {
+        method: "get",
+        url: `${API_URL}/api/v1/groups/${groupId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      };
+      const data = await Auth.authorizedRequest(config, setAccessToken) as GroupInterface;
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async createGroup(
     accessToken: string | null,
     setAccessToken: (token: string) => void,
