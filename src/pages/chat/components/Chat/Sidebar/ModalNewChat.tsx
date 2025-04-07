@@ -29,7 +29,7 @@ const ModalNewChat: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
   const { accessToken, updateAccessToken, userInformation } = useContext(
     ChatContext
   ) as ChatContextType;
-  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+  const { isOpen, onOpen, onClose, onOpenChange } = useDisclosure();
 
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<UserInterface[]>([]);
@@ -79,6 +79,9 @@ const ModalNewChat: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
                   ))
                 : users.map((user, index) => (
                     <Link
+                      onClick={() => {
+                        onClose();
+                      }}
                       to={`/chat/${user._id}`}
                       key={index}
                       className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer"

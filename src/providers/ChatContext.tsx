@@ -5,6 +5,8 @@ import React, {
   ReactNode,
 } from "react";
 
+import {Skeleton} from "@heroui/react";
+
 import { UserInterface } from "../pages/chat/interfaces/User.interface";
 import UserService from "../pages/chat/services/User";
 import { getTokenCookie, removeTokenCookie } from "../services/token.service";
@@ -61,7 +63,13 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     <ChatContext.Provider
       value={{ accessToken, updateAccessToken, userInformation, isLoading, setIsLoading, updateAllPage, setUpdateAllPage }}
     >
-      {children}
+      {isLoading ? (
+        <Skeleton className="w-full h-full rounded-lg">
+          <div className="w-full h-full rounded-lg bg-default-300" />
+        </Skeleton>
+      ) :
+        children
+      }
     </ChatContext.Provider>
   );
 };
