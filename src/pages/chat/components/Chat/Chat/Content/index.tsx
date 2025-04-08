@@ -12,6 +12,7 @@ import { GroupInterface } from "../../../../interfaces/Group.interface";
 import Group from "../../../../services/Group";
 import { UserInterface } from "../../../../interfaces/User.interface";
 import User from "../../../../services/User";
+import Message from "../../../../services/Message";
 
 interface Props {
   isGroup: boolean;
@@ -22,13 +23,14 @@ export const Content: React.FC<Props> = ({
   isGroup = false,
   identifier = "",
 }) => {
-  const { accessToken, updateAccessToken } = useContext(
+  const { accessToken, updateAccessToken, userInformation } = useContext(
     ChatContext
   ) as ChatContextType;
 
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<GroupInterface | null>(null);
   const [user, setUser] = useState<UserInterface | null>(null);
+  const [messages, setMessages] = useState<{ _id?: String, text: string; sender: "sender" | "receiver" }[]>([]);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -49,6 +51,17 @@ export const Content: React.FC<Props> = ({
             identifier
           );
           setUser(user);
+
+          const responseMessages = await Message.getMessageUser(
+            accessToken,
+            updateAccessToken,
+            identifier
+          );
+          responseMessages.map((message) => ({
+            id: message._id,
+            text: message.message,
+            sender: message.receiverId === userInformation?._id ? "sender" : "receiver",
+          }))
         }
       } catch (error) {
         navigate("/chat");
@@ -58,20 +71,6 @@ export const Content: React.FC<Props> = ({
     };
     callToApi();
   }, [isGroup, identifier]);
-  console.log("isGroup", isGroup);
-  console.log("identifier", identifier);
-
-  const [messages, setMessages] = useState<
-  { text: string; sender: "sender" | "receiver" }[]
->([
-  { text: "Hello! How may I help you?", sender: "receiver" },
-  { text: "Hello!", sender: "sender" },
-  { text: "How to turn off push notifications on mobile?", sender: "sender" },
-  {
-    text: "Go to Profile > Settings > Push notifications and switch to off. Simple as that.",
-    sender: "receiver",
-  },
-]);
 
   const handleSend = (text: string) => {
     setMessages([...messages, { text, sender: "sender" }]);
