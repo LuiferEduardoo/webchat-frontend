@@ -1,10 +1,22 @@
 export interface MessageInterface {
   _id: string;
-  senderId: string;
+  senderId: {
+    _id: string;
+    username: string;
+    name: string;
+    picture: string;
+    isOnline: boolean;
+  };
+  receiverId?: {
+    _id: string;
+    username: string;
+    name: string;
+    picture: string;
+    isOnline: boolean;
+  };
   message: string;
   timestamp: string;
   groupId: string;
-  receiverId: string;
   createdAt: string;
   updatedAt: string;
 }

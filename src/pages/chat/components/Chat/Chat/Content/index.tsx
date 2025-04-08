@@ -13,6 +13,7 @@ import Group from "../../../../services/Group";
 import { UserInterface } from "../../../../interfaces/User.interface";
 import User from "../../../../services/User";
 import Message from "../../../../services/Message";
+import { MessageObjectInterface } from "./interfaces/MessageObject.interface";
 
 interface Props {
   isGroup: boolean;
@@ -23,7 +24,7 @@ export const Content: React.FC<Props> = ({
   isGroup = false,
   identifier = "",
 }) => {
-  const { accessToken, updateAccessToken, userInformation } = useContext(
+  const { accessToken, updateAccessToken, userInformation, socket } = useContext(
     ChatContext
   ) as ChatContextType;
 
@@ -57,11 +58,12 @@ export const Content: React.FC<Props> = ({
             updateAccessToken,
             identifier
           );
-          responseMessages.map((message) => ({
+          console.log(responseMessages);
+          setMessages(responseMessages.map((message) => ({
             id: message._id,
             text: message.message,
-            sender: message.receiverId === userInformation?._id ? "sender" : "receiver",
-          }))
+            sender: message.senderId._id === userInformation?._id ? "sender" : "receiver",
+          })));
         }
       } catch (error) {
         navigate("/chat");
@@ -72,7 +74,36 @@ export const Content: React.FC<Props> = ({
     callToApi();
   }, [isGroup, identifier]);
 
+  useEffect(() => {
+    const handleNewMessage = (data: any) => {
+      console.log(data.senderId, data.message);
+      if (data.senderId === user?._id) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: data.message, sender: "receiver" },
+        ]);
+      }
+    };
+  
+    socket.on("newMessage", handleNewMessage);
+    console.log(messages);
+  
+    return () => {
+      socket.off("newMessage", handleNewMessage); // Limpiar para evitar duplicados
+    };
+  }, [user?._id]);
+
   const handleSend = (text: string) => {
+    const messageObject: MessageObjectInterface = {
+      message: text,
+      senderId: userInformation?._id as string,
+    }
+    if(isGroup) {
+      messageObject.groupId = group?._id;
+    } else {
+      messageObject.receiverId = user?._id;
+    }
+    socket.emit("sendMessage", messageObject);
     setMessages([...messages, { text, sender: "sender" }]);
   };
 
