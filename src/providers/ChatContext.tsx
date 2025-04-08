@@ -5,6 +5,7 @@ import React, {
   ReactNode,
 } from "react";
 
+import io from 'socket.io-client';
 import {Skeleton} from "@heroui/react";
 
 import { UserInterface } from "../pages/chat/interfaces/User.interface";
@@ -19,6 +20,7 @@ export interface ChatContextType {
   setIsLoading: (loading: boolean) => void;
   updateAllPage: boolean;
   setUpdateAllPage: (loading: boolean) => void;
+  socket: any;
 }
 
 interface ChatProviderProps {
@@ -35,6 +37,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
   );
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [userInformation, setUserInformation] = useState<UserInterface | null>(null);
+  const [socket, setSocket] = useState<any>(null);
   const [updateAllPage, setUpdateAllPage] = useState(true);
 
 
@@ -57,11 +60,29 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       }
     };
     getInformationUser();
+
+    const socketConnection = io(import.meta.env.VITE_API, {
+      transports: ['websocket'], // Usar solo websocket
+      auth: { token: accessToken },
+      autoConnect: true,
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+    });
+
+    socketConnection.on('connect', () => {
+      console.log('Socket connected');
+    });
+    setSocket(socketConnection);
+
+    return () => {
+      socketConnection.disconnect();
+    };
   }, [accessToken, updateAllPage]);
 
   return (
     <ChatContext.Provider
-      value={{ accessToken, updateAccessToken, userInformation, isLoading, setIsLoading, updateAllPage, setUpdateAllPage }}
+      value={{ accessToken, updateAccessToken, userInformation, isLoading, setIsLoading, updateAllPage, setUpdateAllPage, socket }}
     >
       {isLoading ? (
         <Skeleton className="w-full h-full rounded-lg">
