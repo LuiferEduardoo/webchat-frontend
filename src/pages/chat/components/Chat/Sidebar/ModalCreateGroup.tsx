@@ -11,7 +11,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
 } from "@heroui/react";
 
@@ -141,11 +140,6 @@ const ModalCreateGroup: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
                 Crear Grupo
               </Button>
             </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" onClick={onOpenChange}>
-                Cancelar
-              </Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
       </div>

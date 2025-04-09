@@ -9,7 +9,6 @@ import {
   ModalContent,
   ModalHeader,
   ModalBody,
-  ModalFooter,
   useDisclosure,
   Avatar,
 } from "@heroui/react";
@@ -57,7 +56,7 @@ const ModalNewChat: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
       </Button>
       <div className="flex flex-col gap-2 mt-4">
         <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-          <ModalContent className="w-96">
+          <ModalContent className="w-96 pb-8">
             <ModalHeader className="text-center text-black">
               Agregar nueva persona
             </ModalHeader>
@@ -101,11 +100,6 @@ const ModalNewChat: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
                     </Link>
                   ))}
             </ModalBody>
-            <ModalFooter>
-              <Button variant="ghost" onClick={onOpenChange}>
-                Cancelar
-              </Button>
-            </ModalFooter>
           </ModalContent>
         </Modal>
       </div>
