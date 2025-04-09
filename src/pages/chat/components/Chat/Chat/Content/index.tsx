@@ -58,7 +58,6 @@ export const Content: React.FC<Props> = ({
             updateAccessToken,
             identifier
           );
-          console.log(responseMessages);
           setMessages(responseMessages.map((message) => ({
             id: message._id,
             text: message.message,
@@ -76,7 +75,6 @@ export const Content: React.FC<Props> = ({
 
   useEffect(() => {
     const handleNewMessage = (data: any) => {
-      console.log(data.senderId, data.message);
       if (data.senderId === user?._id) {
         setMessages((prevMessages) => [
           ...prevMessages,
@@ -86,7 +84,6 @@ export const Content: React.FC<Props> = ({
     };
   
     socket.on("newMessage", handleNewMessage);
-    console.log(messages);
   
     return () => {
       socket.off("newMessage", handleNewMessage); // Limpiar para evitar duplicados

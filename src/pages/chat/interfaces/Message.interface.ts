@@ -22,11 +22,11 @@ export interface MessageInterface {
 }
 
 export interface SenderMessageInterface {
-  senderId: string;
-  senderUsername: string;
-  senderName: string;
-  senderPicture: string;
-  senderIsOnline: boolean;
+  _id: string;
+  username: string;
+  name: string;
+  picture: string;
+  isOnline: boolean;
   lastMessage: {
     id: string;
     content: string;

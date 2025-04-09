@@ -67,16 +67,16 @@ const Chat: React.FC<Props> = ({ isCollapsed }) => {
           ))
         : userSendersMessages.map((chat, index) => (
             <Link
-              to={`/chat/${chat.senderId}`}
+              to={`/chat/${chat._id}`}
               key={index}
               className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer"
             >
               <Avatar
-                src={chat.senderPicture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
+                src={chat.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}
               />
               {!isCollapsed && (
                 <div className="flex flex-col">
-                  <span className="font-medium text-">{chat.senderName}</span>
+                  <span className="font-medium text-">{chat.name.split(" ")[0]}</span>
                 </div>
               )}
             </Link>
