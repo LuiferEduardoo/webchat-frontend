@@ -1,14 +1,19 @@
-import React, {useContext} from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { CiLogout } from "react-icons/ci";
 
-import {Skeleton} from "@heroui/react";
+import { Avatar, Skeleton } from "@heroui/react";
 
-import { ChatContext, ChatContextType } from "../../../../providers/ChatContext";
+import {
+  ChatContext,
+  ChatContextType,
+} from "../../../../providers/ChatContext";
 import { removeTokenCookie } from "../../../../services/token.service";
 
 const OptionsBelow: React.FC = () => {
-  const {userInformation, isLoading} = useContext(ChatContext) as ChatContextType;
+  const { userInformation, isLoading } = useContext(
+    ChatContext
+  ) as ChatContextType;
   const handleLogout = () => {
     removeTokenCookie("access_token");
     window.location.reload();
@@ -19,10 +24,13 @@ const OptionsBelow: React.FC = () => {
         {isLoading ? (
           <Skeleton className="flex rounded-full w-12 h-12" />
         ) : (
-          <img
-            src={`${userInformation?.picture || "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"}`}
-            alt="Profile"
-            className="w-12 h-12 rounded-full object-cover"
+          <Avatar
+            src={
+              userInformation?.picture ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                userInformation?.name?.split(" ")[0] || "U"
+              )}&background=random&color=fff`
+            }
           />
         )}
       </Link>

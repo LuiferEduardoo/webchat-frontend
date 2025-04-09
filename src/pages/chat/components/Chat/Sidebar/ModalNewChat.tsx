@@ -88,7 +88,9 @@ const ModalNewChat: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
                       <Avatar
                         src={
                           user.picture ||
-                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png"
+                          `https://ui-avatars.com/api/?name=${encodeURIComponent(
+                            user.name?.split(" ")[0] || "U"
+                          )}&background=random&color=fff`
                         }
                       />
 
