@@ -60,6 +60,26 @@ class UserService {
       throw error;
     }
   }
+
+  async updateUser(
+    accessToken: string | null,
+    setAccessToken: (token: string) => void,
+    data: any
+  ) {
+    try {
+      const config = {
+        method: "put",
+        url: `${API_URL}/api/v1/users`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        data: data
+      };
+      return await Auth.authorizedRequest(config, setAccessToken);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default new UserService();
