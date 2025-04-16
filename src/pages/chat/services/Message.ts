@@ -24,6 +24,27 @@ class MessageService {
       throw error;
     }
   }
+
+  async getMessageGroup(
+    accessToken: string | null,
+    setAccessToken: (token: string) => void,
+    groupId: string
+  ): Promise<MessageInterface[]> {
+    try {
+      const config = {
+        method: "get",
+        url: `${API_URL}/api/v1/messages/groups/${groupId}`,
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        }
+      };
+      const data = await Auth.authorizedRequest(config, setAccessToken) as MessageInterface[];
+      return data;
+    } catch (error) {
+      throw error;
+    }
+  }
+  
   async sendersMessages(
     accessToken: string | null,
     setAccessToken: (token: string) => void

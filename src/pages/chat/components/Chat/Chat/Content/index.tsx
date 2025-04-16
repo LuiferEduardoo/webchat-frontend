@@ -13,7 +13,7 @@ import Group from "../../../../services/Group";
 import { UserInterface } from "../../../../interfaces/User.interface";
 import User from "../../../../services/User";
 import Message from "../../../../services/Message";
-import { MessageObjectInterface } from "./interfaces/MessageObject.interface";
+import { MessageObjectInterface, MessageProps } from "./interfaces/MessageObject.interface";
 
 interface Props {
   isGroup: boolean;
@@ -24,14 +24,15 @@ export const Content: React.FC<Props> = ({
   isGroup = false,
   identifier = "",
 }) => {
-  const { accessToken, updateAccessToken, userInformation, socket } = useContext(
-    ChatContext
-  ) as ChatContextType;
+  const { accessToken, updateAccessToken, userInformation, socket } =
+    useContext(ChatContext) as ChatContextType;
 
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<GroupInterface | null>(null);
   const [user, setUser] = useState<UserInterface | null>(null);
-  const [messages, setMessages] = useState<{ _id?: String, text: string; sender: "sender" | "receiver" }[]>([]);
+  const [messages, setMessages] = useState<
+  MessageProps[]
+  >([]);
 
   const navigate = useNavigate();
   useEffect(() => {
@@ -45,6 +46,27 @@ export const Content: React.FC<Props> = ({
             identifier
           );
           setGroup(group);
+
+          const responseMessages = await Message.getMessageGroup(
+            accessToken,
+            updateAccessToken,
+            identifier
+          );
+          setMessages(
+            responseMessages.map((message) => ({
+              id: message._id,
+              text: message.message,
+              sender:
+                message.senderId._id === userInformation?._id
+                  ? "sender"
+                  : "receiver",
+              senderInformation: {
+                _id: message.senderId._id,
+                name: message.senderId.name,
+                picture: message.senderId.picture,
+              },
+            }))
+          );
         } else {
           const user = await User.getUser(
             accessToken,
@@ -58,11 +80,16 @@ export const Content: React.FC<Props> = ({
             updateAccessToken,
             identifier
           );
-          setMessages(responseMessages.map((message) => ({
-            id: message._id,
-            text: message.message,
-            sender: message.senderId._id === userInformation?._id ? "sender" : "receiver",
-          })));
+          setMessages(
+            responseMessages.map((message) => ({
+              id: message._id,
+              text: message.message,
+              sender:
+                message.senderId._id === userInformation?._id
+                  ? "sender"
+                  : "receiver",
+            }))
+          );
         }
       } catch (error) {
         navigate("/chat");
@@ -75,7 +102,16 @@ export const Content: React.FC<Props> = ({
 
   useEffect(() => {
     const handleNewMessage = (data: any) => {
-      if (data.senderId === user?._id) {
+      if (data.groupId === group?._id && data.senderId !== userInformation?._id) {
+        setMessages((prevMessages) => [
+          ...prevMessages,
+          { text: data.message, senderInformation: {
+            _id: data.senderId._id,
+            name: data.senderId.name,
+            picture: data.senderId.picture
+          }, sender: "receiver" },
+        ]);
+      } else if (data.senderId === user?._id) {
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: data.message, sender: "receiver" },
@@ -83,31 +119,40 @@ export const Content: React.FC<Props> = ({
       }
     };
   
-    socket.on("newMessage", handleNewMessage);
+    if (isGroup) {
+      socket.on("newGroupMessage", handleNewMessage);
+    } else {
+      socket.on("newMessage", handleNewMessage);
+    }
   
     return () => {
-      socket.off("newMessage", handleNewMessage); // Limpiar para evitar duplicados
+      if (isGroup) {
+        socket.off("newGroupMessage", handleNewMessage);
+      } else {
+        socket.off("newMessage", handleNewMessage);
+      }
     };
-  }, [user?._id]);
+  }, [user?._id, group?._id, isGroup]);
+  
 
   const handleSend = (text: string) => {
     const messageObject: MessageObjectInterface = {
       message: text,
-      senderId: userInformation?._id as string,
-    }
-    if(isGroup) {
+    };
+    if (isGroup) {
       messageObject.groupId = group?._id;
+      socket.emit("sendGroupMessage", messageObject);
     } else {
       messageObject.receiverId = user?._id;
+      socket.emit("sendMessage", messageObject);
     }
-    socket.emit("sendMessage", messageObject);
     setMessages([...messages, { text, sender: "sender" }]);
   };
 
   return (
     <div className="w-full h-full h-screen flex flex-col border rounded shadow-md">
       <Header isLoading={isLoading} group={group} user={user} />
-      <MessageList messages={messages} isLoading={isLoading} />
+      <MessageList messages={messages} isLoading={isLoading} isGroup={isGroup} />
       <Input onSend={handleSend} />
     </div>
   );
