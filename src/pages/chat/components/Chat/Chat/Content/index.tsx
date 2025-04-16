@@ -67,6 +67,7 @@ export const Content: React.FC<Props> = ({
               },
             }))
           );
+          setUser(null);
         } else {
           const user = await User.getUser(
             accessToken,
@@ -90,6 +91,7 @@ export const Content: React.FC<Props> = ({
                   : "receiver",
             }))
           );
+          setGroup(null);
         }
       } catch (error) {
         navigate("/chat");
