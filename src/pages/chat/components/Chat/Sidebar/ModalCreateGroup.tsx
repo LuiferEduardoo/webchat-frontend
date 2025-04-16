@@ -27,7 +27,7 @@ interface ModalCreateGroupProps {
 }
 
 const ModalCreateGroup: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
-  const { accessToken, updateAccessToken, userInformation, setUpdateAllPage } = useContext(
+  const { accessToken, updateAccessToken, userInformation, setUpdateAllPage, socket } = useContext(
     ChatContext
   ) as ChatContextType;
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
@@ -60,6 +60,12 @@ const ModalCreateGroup: React.FC<ModalCreateGroupProps> = ({ isCollapsed }) => {
     try {
       setIsLoadingButton(true);
       await Group.createGroup(accessToken, updateAccessToken, data);
+      const memberToJoin = [...members, userInformation?._id]
+      memberToJoin.map((member) => {
+        socket.emit("addUserToGroup", {
+          groupId: member
+        });
+      });
       addToast({
         title: "Grupo creado",
         description: "Grupo creado correctamente",
