@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 import {
@@ -30,11 +30,11 @@ export const Content: React.FC<Props> = ({
   const [isLoading, setIsLoading] = useState(true);
   const [group, setGroup] = useState<GroupInterface | null>(null);
   const [user, setUser] = useState<UserInterface | null>(null);
-  const [messages, setMessages] = useState<
-  MessageProps[]
-  >([]);
+  const [messages, setMessages] = useState<MessageProps[]>([]);
 
   const navigate = useNavigate();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const callToApi = async () => {
       setIsLoading(true);
@@ -136,6 +136,11 @@ export const Content: React.FC<Props> = ({
     };
   }, [user?._id, group?._id, isGroup]);
   
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" }); 
+    }
+  }, [messages]);
 
   const handleSend = (text: string) => {
     const messageObject: MessageObjectInterface = {
@@ -154,7 +159,10 @@ export const Content: React.FC<Props> = ({
   return (
     <div className="w-full h-full h-screen flex flex-col border rounded shadow-md">
       <Header isLoading={isLoading} group={group} user={user} />
-      <MessageList messages={messages} isLoading={isLoading} isGroup={isGroup} />
+      <div className="flex-1 overflow-y-auto px-4 py-2 space-y-2 bg-gray-50">
+        <MessageList messages={messages} isLoading={isLoading} isGroup={isGroup} />
+        <div ref={messagesEndRef} />
+      </div>
       <Input onSend={handleSend} />
     </div>
   );
