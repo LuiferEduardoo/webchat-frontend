@@ -104,7 +104,7 @@ export const Content: React.FC<Props> = ({
 
   useEffect(() => {
     const handleNewMessage = (data: any) => {
-      if (data.groupId === group?._id && data.senderId !== userInformation?._id) {
+      if (data.groupId === group?._id && data.senderId?._id !== userInformation?._id) {
         setMessages((prevMessages) => [
           ...prevMessages,
           { text: data.message, senderInformation: {
