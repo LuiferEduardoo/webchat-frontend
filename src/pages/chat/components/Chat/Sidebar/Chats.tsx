@@ -13,9 +13,10 @@ import { GroupInterface } from "../../../interfaces/Group.interface";
 import GroupService from "../../../services/Group";
 
 interface Props {
+  search: string;
   isCollapsed: boolean;
 }
-const Chat: React.FC<Props> = ({ isCollapsed }) => {
+const Chat: React.FC<Props> = ({ search, isCollapsed }) => {
   const { accessToken, updateAccessToken } = useContext(
     ChatContext
   ) as ChatContextType;
@@ -24,6 +25,10 @@ const Chat: React.FC<Props> = ({ isCollapsed }) => {
     SenderMessageInterface[]
   >([]);
   const [groups, setGroups] = useState<GroupInterface[]>([]);
+  const [originalUserSendersMessages, setOriginalUserSendersMessages] = useState<
+    SenderMessageInterface[]
+  >([]);
+  const [originalGroups, setOriginalGroups] = useState<GroupInterface[]>([]);
 
   useEffect(() => {
     const fetchUserSendersMessages = async () => {
@@ -33,11 +38,13 @@ const Chat: React.FC<Props> = ({ isCollapsed }) => {
           accessToken,
           updateAccessToken
         );
+        setOriginalUserSendersMessages(sender);
         setUserSendersMessages(sender);
         const grups = await GroupService.meGroup(
           accessToken,
           updateAccessToken
         );
+        setOriginalGroups(grups);
         setGroups(grups);
       } catch (error) {
         console.error("Error fetching user senders messages:", error);
@@ -48,6 +55,24 @@ const Chat: React.FC<Props> = ({ isCollapsed }) => {
 
     fetchUserSendersMessages();
   }, []);
+
+  useEffect(() => {
+    if (search !== "") {
+      const filteredSenders = originalUserSendersMessages.filter((sender) =>
+        sender.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setUserSendersMessages(filteredSenders);
+  
+      const filteredGroups = originalGroups.filter((group) =>
+        group.name.toLowerCase().includes(search.toLowerCase())
+      );
+      setGroups(filteredGroups);
+    } else {
+      setUserSendersMessages(originalUserSendersMessages);
+      setGroups(originalGroups);
+    }
+  }, [search]);
+  
   return (
     <div className="flex flex-col gap-2 mt-4 flex-1 overflow-y-auto text-black">
       {isLoading
