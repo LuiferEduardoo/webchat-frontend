@@ -51,7 +51,7 @@ const Footer: React.FC = () => {
                   </svg>
                 </a>
                 <a
-                  href="mailto:contact@luifereduardoo.com"
+                  href="mailto:contacto@luifereduardoo.com"
                   className="text-gray-600 hover:text-black transition"
                   target="_blank"
                 >
