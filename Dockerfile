@@ -5,8 +5,8 @@ WORKDIR /app
 
 
 # Definir el ARG para pasar las variables durante el build
-ARG VITE_API_URL
-ENV VITE_API_URL=${VITE_API_URL}
+ARG VITE_API
+ENV VITE_API=https://api.webchat.luifereduardoo.com
 
 # Copia los archivos necesarios para instalar dependencias
 COPY package*.json ./
