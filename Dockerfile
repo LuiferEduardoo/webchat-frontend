@@ -3,6 +3,11 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
+
+# Definir el ARG para pasar las variables durante el build
+ARG VITE_API_URL
+ENV VITE_API_URL=${VITE_API_URL}
+
 # Copia los archivos necesarios para instalar dependencias
 COPY package*.json ./
 
